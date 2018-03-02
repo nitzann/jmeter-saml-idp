@@ -1,0 +1,48 @@
+<samlp:Response
+        Destination="http://localhost:6002/saml2/v1/17ff654d-0a49-4f4c-abf6-5e0f07459dbc/login-acs"
+        InResponseTo="_0acfef8ad2125ea105912a6c11f62d1a99f1c81859"
+        IssueInstant="2018-02-27T17:07:14.495Z"
+        ID="ID8370a1ca9f15c7b04cf0ae81f8237f32db4f73c516c85e6d03"
+        Version="2.0"
+        xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">
+    <saml:Issuer xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">https://pingone.com/idp/walla.co</saml:Issuer>
+    <samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/></samlp:Status>
+    <saml:Assertion Version="2.0" IssueInstant="2018-02-27T17:07:14.495Z" ID="IDda380b8bc65d6df16ece4ef957f4e1afaee19787fdcb95e703" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">
+        <saml:Issuer>https://pingone.com/idp/walla.co</saml:Issuer>
+        <saml:Subject>
+            <saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress">petercohen@gmail.com</saml:NameID>
+            <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"><saml:SubjectConfirmationData InResponseTo="_0acfef8ad2125ea105912a6c11f62d1a99f1c81859" NotOnOrAfter="2030-02-27T17:22:14.495Z" Recipient="http://localhost:6002/saml2/v1/17ff654d-0a49-4f4c-abf6-5e0f07459dbc/login-acs"/></saml:SubjectConfirmation>
+        </saml:Subject>
+        <saml:Conditions NotOnOrAfter="2030-02-27T17:22:14.495Z" NotBefore="2018-02-27T17:02:14.495Z">
+            <saml:AudienceRestriction>
+                <saml:Audience>urn:ibm:cloud:services:appid:17ff654d-0a49-4f4c-abf6-5e0f07459dbc</saml:Audience>
+            </saml:AudienceRestriction>
+        </saml:Conditions>
+        <saml:AuthnStatement AuthnInstant="2018-02-27T17:07:14.495Z" SessionIndex="IDd0886171cced070b78b5288159b0fab18bb82067400edd2d03">
+            <saml:AuthnContext>
+                <saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:Password</saml:AuthnContextClassRef>
+                <saml:AuthenticatingAuthority>https://pingone.com/idp/walla.co</saml:AuthenticatingAuthority>
+            </saml:AuthnContext>
+        </saml:AuthnStatement>
+        <saml:AttributeStatement xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <saml:Attribute NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic" Name="name">
+                <saml:AttributeValue xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Peter</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic" Name="not_valid_name">
+                <saml:AttributeValue xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Cohen</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic" Name="PingOne.idpid">
+                <saml:AttributeValue xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">624d6042-ec5e-4346-a689-df64076fe657</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic" Name="PingOne.AuthenticatingAuthority">
+                <saml:AttributeValue xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">https://pingone.com/idp/walla.co</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic" Name="email">
+                <saml:AttributeValue xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">petercohen@gmail.com</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic" Name="picture">
+                <saml:AttributeValue xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">https://static.independent.co.uk/s3fs-public/styles/story_large/public/thumbnails/image/2016/11/16/12/homer-simpson.jpeg</saml:AttributeValue>
+            </saml:Attribute>
+        </saml:AttributeStatement>
+    </saml:Assertion>
+</samlp:Response>
