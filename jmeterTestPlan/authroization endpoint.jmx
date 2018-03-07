@@ -232,8 +232,7 @@ bsh.shared.code = code;
             <collectionProp name="Arguments.arguments">
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">grant_type=authorization_code&amp;redirect_uri=http%3A%2F%2Flocalhost&amp;code=${code}&#xd;
-</stringProp>
+                <stringProp name="Argument.value">grant_type=authorization_code&amp;redirect_uri=http%3A%2F%2Flocalhost&amp;code=${code}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>
