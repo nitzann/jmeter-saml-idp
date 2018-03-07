@@ -113,9 +113,10 @@ public class SAMLSigner {
         // Create an Array of Transform, add it one Transform which specify the Signature ENVELOPED method.         
         List<Transform> transformList = new ArrayList<Transform>(1);
         transformList.add(fac.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null));
+        transformList.add(fac.newTransform(CanonicalizationMethod.EXCLUSIVE, (TransformParameterSpec) null));
 
         // Create a Reference which contain: An URI to the Assertion ID, the Digest Method and the Transform List which specify the Signature ENVELOPED method.
-        Reference reference = fac.newReference("#" + assertionID, fac.newDigestMethod(DigestMethod.SHA256, null), transformList, null, null);
+        Reference reference = fac.newReference("#" + assertionID, fac.newDigestMethod(DigestMethod.SHA1, null), transformList, null, null);
         List<Reference> referenceList = Collections.singletonList(reference);
         // Create a SignedInfo with the pre-specified: Canonicalization Method, Signature Method and List of References.
         SignedInfo si = fac.newSignedInfo(canonicalizationMethod, signatureMethod, referenceList);

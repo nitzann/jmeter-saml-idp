@@ -203,6 +203,100 @@ vars.put(&quot;onelogin_samlresponse&quot;, samlresponse);
 </stringProp>
           </BeanShellPreProcessor>
           <hashTree/>
+          <BeanShellAssertion guiclass="BeanShellAssertionGui" testclass="BeanShellAssertion" testname="Redirect to App Assertion" enabled="true">
+            <stringProp name="BeanShellAssertion.query">final String EXPECTED_RESULT_CODE=&quot;302&quot;;
+final String GRANT_CODE_STR=&quot;code=&quot;;
+
+String responseCode = SampleResult.getResponseCode();
+if (!responseCode.equals(EXPECTED_RESULT_CODE) ) {
+   Failure = true;
+   FailureMessage = &quot;paresponseCode should be &quot; + EXPECTED_RESULT_CODE + &quot; but was&quot; + paresponseCode;
+}
+
+String response = SampleResult.getResponseDataAsString();
+int posGrantCode = response.indexOf(GRANT_CODE_STR);
+
+String code = response.substring(posGrantCode+GRANT_CODE_STR.length() );
+print(&quot;code: &quot; + code);
+bsh.shared.code = code;
+</stringProp>
+            <stringProp name="BeanShellAssertion.filename"></stringProp>
+            <stringProp name="BeanShellAssertion.parameters"></stringProp>
+            <boolProp name="BeanShellAssertion.resetInterpreter">false</boolProp>
+          </BeanShellAssertion>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Token endpoint" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">grant_type=authorization_code&amp;redirect_uri=http%3A%2F%2Flocalhost&amp;code=${code}&#xd;
+</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${auth-server}</stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">oauth/v3/${tenant-id}/token</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Basic ZDI0N2ZjNjUtOWY5Zi00OGVjLThiZGMtZTgyODJhNTFkZTMwOlpUTm1OakEyTkRndE1qSmtNeTAwT1RkakxUZ3lPRFV0TnpWaE1XWTVPVFJpTURKaA==</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Accept</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <AuthManager guiclass="AuthPanel" testclass="AuthManager" testname="HTTP Authorization Manager" enabled="false">
+            <collectionProp name="AuthManager.auth_list">
+              <elementProp name="" elementType="Authorization">
+                <stringProp name="Authorization.url"></stringProp>
+                <stringProp name="Authorization.username"></stringProp>
+                <stringProp name="Authorization.password"></stringProp>
+                <stringProp name="Authorization.domain"></stringProp>
+                <stringProp name="Authorization.realm"></stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Authorization">
+                <stringProp name="Authorization.url">https://${auth-server}/oauth/v3/${tenant-id}/token</stringProp>
+                <stringProp name="Authorization.username">${client-id}</stringProp>
+                <stringProp name="Authorization.password">${client-secret}</stringProp>
+                <stringProp name="Authorization.domain"></stringProp>
+                <stringProp name="Authorization.realm"></stringProp>
+              </elementProp>
+            </collectionProp>
+          </AuthManager>
+          <hashTree/>
+          <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor" enabled="true">
+            <boolProp name="resetInterpreter">false</boolProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="script">String code = bsh.shared.code;
+vars.put(&quot;code&quot;,code);</stringProp>
+          </BeanShellPreProcessor>
+          <hashTree/>
         </hashTree>
       </hashTree>
       <UserParameters guiclass="UserParametersGui" testclass="UserParameters" testname="appid Parameters" enabled="true">
@@ -210,12 +304,16 @@ vars.put(&quot;onelogin_samlresponse&quot;, samlresponse);
           <stringProp name="-1852828386">tenant-id</stringProp>
           <stringProp name="-1904137635">client-id</stringProp>
           <stringProp name="-1993371896">auth-server</stringProp>
+          <stringProp name="-867697934">client-secret</stringProp>
+          <stringProp name="949740539">redirect-uri</stringProp>
         </collectionProp>
         <collectionProp name="UserParameters.thread_values">
-          <collectionProp name="698655784">
+          <collectionProp name="-576612251">
             <stringProp name="-231417014">5077e19f-6c0e-444b-91e3-fba2dc1affd8</stringProp>
             <stringProp name="335502254">d247fc65-9f9f-48ec-8bdc-e8282a51de30</stringProp>
             <stringProp name="91891656">appid-oauth.stage1.eu-gb.bluemix.net</stringProp>
+            <stringProp name="-18532511">ZTNmNjA2NDgtMjJkMy00OTdjLTgyODUtNzVhMWY5OTRiMDJh</stringProp>
+            <stringProp name="-1301564991">http://localhost</stringProp>
           </collectionProp>
         </collectionProp>
         <boolProp name="UserParameters.per_iteration">false</boolProp>

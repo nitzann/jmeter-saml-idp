@@ -112,27 +112,40 @@ public class XMLSigning {
 
         Document doc = dbf.newDocumentBuilder().parse(inputStream);
 
-        appendDataFromRequest(doc, readSAMLRequest(samlRequest));
-
-        SAMLSigner.signAssertion(doc);
-        // output the resulting document
         OutputStream os = System.out;
 
+        System.out.println("Before anything: ");
+        System.out.println("____________________");
 
         DOMSource domDocSource = new DOMSource(doc);
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer trans = tf.newTransformer();
         trans.transform(domDocSource, new StreamResult(os));
 
-        System.out.println("");
+        appendDataFromRequest(doc, readSAMLRequest(samlRequest));
+
+
+
+        System.out.println("____________________");
+        System.out.println("Before signature: ");
         System.out.println("____________________");
 
+        domDocSource = new DOMSource(doc);
+        tf = TransformerFactory.newInstance();
+        trans = tf.newTransformer();
+        trans.transform(domDocSource, new StreamResult(os));
+
+
+        SAMLSigner.signAssertion(doc);
+        // output the resulting document
+
+        domDocSource = new DOMSource(doc);
         StringWriter writer = new StringWriter();
         StreamResult result = new StreamResult(writer);
         trans.transform(domDocSource, result);
-
-        System.out.println("XML IN String format is: \n" + writer.toString());
+        System.out.println("\n After signature: \n" + writer.toString());
         System.out.println("____________________");
+
         String compressedAndEncoded = compressAndEncodeString(writer.toString());
         System.out.println(compressedAndEncoded);
         System.out.println("____________________");
@@ -174,13 +187,15 @@ public class XMLSigning {
     private static String compressAndEncodeString(String str) {
         DeflaterOutputStream def = null;
         String compressed = null;
+        str=str.replaceAll("\\<\\?xml(.+?)\\?\\>", "").trim();
         try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            // create deflater without header
-            def = new DeflaterOutputStream(out, new Deflater(Deflater.NO_COMPRESSION, true));
-            def.write(str.getBytes());
-            def.close();
-            compressed = Base64.getEncoder().encodeToString(out.toByteArray());
+//            ByteArrayOutputStream out = new ByteArrayOutputStream();
+//            // create deflater without header
+//            def = new DeflaterOutputStream(out, new Deflater(Deflater.NO_COMPRESSION, true));
+//            def.write(str.getBytes());
+//            def.close();
+//            compressed = Base64.getEncoder().encodeToString(out.toByteArray());
+            compressed = Base64.getEncoder().encodeToString(str.getBytes());
         } catch(Exception e) {
             e.printStackTrace();
         }
