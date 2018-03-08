@@ -91,7 +91,7 @@ print(response);
 int posSamlRequest = response.indexOf(SAML_REQUEST_STR);
 int posRelayState = response.indexOf(RELAY_STATE_STR);
 
-String samlRequest = response.substring(posSamlRequest+SAML_REQUEST_STR.length(), posRelayState -1 ); //until &amp;
+String samlRequest = response.substring(posSamlRequest+SAML_REQUEST_STR.length(), posRelayState -1 ); 
 print(&quot;samlRequest:&quot; + samlRequest);
 bsh.shared.samlRequest = samlRequest;
 
@@ -180,6 +180,7 @@ bsh.shared.relayState = relayState;</stringProp>
             <stringProp name="parameters"></stringProp>
             <boolProp name="resetInterpreter">false</boolProp>
             <stringProp name="script">import main.java.com.ibm.appid.saml.perf.XMLSigning;
+boolean debug = vars.get(&quot;debug&quot;).equalsIgnoreCase(&quot;true&quot;);
 
 String samlresponse = null;
 try{
@@ -188,15 +189,17 @@ try{
 	e.printStackTrace();
 }
 
-try{
-	print(&quot;samlresponse=&quot; + samlresponse);
-} catch(Exception e){
-	e.printStackTrace();
+if(debug){
+	try{
+		print(&quot;samlresponse=&quot; + samlresponse);
+	} catch(Exception e){
+		e.printStackTrace();
+	}
 }
 
 String relayState = bsh.shared.relayState;
 
-print(&quot;before POST, this is the rs:&quot; + relayState);
+if(debug) print(&quot;before POST, this is the rs:&quot; + relayState);
 
 vars.put(&quot;relayState_fromAppid&quot;,relayState);
 vars.put(&quot;onelogin_samlresponse&quot;, samlresponse);
@@ -305,14 +308,16 @@ vars.put(&quot;code&quot;,code);</stringProp>
           <stringProp name="-1993371896">auth-server</stringProp>
           <stringProp name="-867697934">client-secret</stringProp>
           <stringProp name="949740539">redirect-uri</stringProp>
+          <stringProp name="95458899">debug</stringProp>
         </collectionProp>
         <collectionProp name="UserParameters.thread_values">
-          <collectionProp name="-576612251">
+          <collectionProp name="-691541559">
             <stringProp name="-231417014">5077e19f-6c0e-444b-91e3-fba2dc1affd8</stringProp>
             <stringProp name="335502254">d247fc65-9f9f-48ec-8bdc-e8282a51de30</stringProp>
             <stringProp name="91891656">appid-oauth.stage1.eu-gb.bluemix.net</stringProp>
             <stringProp name="-18532511">ZTNmNjA2NDgtMjJkMy00OTdjLTgyODUtNzVhMWY5OTRiMDJh</stringProp>
             <stringProp name="-1301564991">http://localhost</stringProp>
+            <stringProp name="3569038">true</stringProp>
           </collectionProp>
         </collectionProp>
         <boolProp name="UserParameters.per_iteration">false</boolProp>

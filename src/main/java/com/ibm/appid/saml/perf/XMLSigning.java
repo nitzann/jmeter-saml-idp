@@ -1,25 +1,14 @@
 package main.java.com.ibm.appid.saml.perf;
 
-import javax.xml.crypto.*;
-import javax.xml.crypto.dsig.*;
-import javax.xml.crypto.dom.*;
-import javax.xml.crypto.dsig.dom.DOMSignContext;
-import javax.xml.crypto.dsig.keyinfo.*;
-import javax.xml.crypto.dsig.spec.*;
 import java.io.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.security.*;
 import java.util.Base64;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.zip.Deflater;
+import java.util.Random;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -27,10 +16,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * This is a simple example of generating an Enveloped XML
@@ -84,6 +71,7 @@ import org.xml.sax.SAXException;
  * </code></pre>
  */
 public class XMLSigning {
+    private static Random random = new Random();
 
     //
     // Synopsis: java GenEnveloped [document] [output]
@@ -108,52 +96,68 @@ public class XMLSigning {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
 
-        InputStream inputStream = XMLSigning.class.getClassLoader().getResourceAsStream("main/resources/onelogin-saml-response");
+        InputStream inputStream = XMLSigning.class.getClassLoader().getResourceAsStream("main/resources/saml-response.xml");
 
         Document doc = dbf.newDocumentBuilder().parse(inputStream);
 
-        OutputStream os = System.out;
-
-        System.out.println("Before anything: ");
-        System.out.println("____________________");
-
-        DOMSource domDocSource = new DOMSource(doc);
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer trans = tf.newTransformer();
-        trans.transform(domDocSource, new StreamResult(os));
 
         appendDataFromRequest(doc, readSAMLRequest(samlRequest));
 
+        randomizeUser(doc);
 
-
-        System.out.println("____________________");
-        System.out.println("Before signature: ");
-        System.out.println("____________________");
-
-        domDocSource = new DOMSource(doc);
-        tf = TransformerFactory.newInstance();
-        trans = tf.newTransformer();
-        trans.transform(domDocSource, new StreamResult(os));
-
+//        printDom(doc);
 
         SAMLSigner.signAssertion(doc);
-        // output the resulting document
 
-        domDocSource = new DOMSource(doc);
+
+        DOMSource domDocSource = new DOMSource(doc);
         StringWriter writer = new StringWriter();
         StreamResult result = new StreamResult(writer);
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer trans = tf.newTransformer();
         trans.transform(domDocSource, result);
-        System.out.println("\n After signature: \n" + writer.toString());
-        System.out.println("____________________");
+//        System.out.println("\n After signature: \n" + writer.toString());
+//        System.out.println("____________________");
 
         String compressedAndEncoded = compressAndEncodeString(writer.toString());
-        System.out.println(compressedAndEncoded);
-        System.out.println("____________________");
+//        System.out.println(compressedAndEncoded);
+//        System.out.println("____________________");
 
         String urlEncoded = URLEncoder.encode(compressedAndEncoded, "UTF-8");
-        System.out.println(urlEncoded);
+//        System.out.println(urlEncoded);
 
         return urlEncoded;
+    }
+
+    private static void printDom(Document doc) throws TransformerException {
+        DOMSource domDocSource = new DOMSource(doc);
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer trans = tf.newTransformer();
+        trans.transform(domDocSource, new StreamResult(System.out));
+    }
+
+    private static void randomizeUser(Document doc) {
+        int randomNum = Math.abs(random.nextInt(100000));//we only randomize to beat the ratelimitter, we don't mind if we are not authenticate uniquely
+        String userName = "user" + randomNum;
+        String email = "user"+randomNum+"n@gmail.com";
+
+        Node nameID = doc.getElementsByTagName("saml:NameID").item(0);
+        nameID.setTextContent(email);
+
+        NodeList attrValues = doc.getElementsByTagName("saml:AttributeValue");
+        for (int i = 0; i < attrValues.getLength(); i++) {
+            Node node = attrValues.item(i);
+            Node parent = node.getParentNode();
+            NamedNodeMap attrs = parent.getAttributes();
+            Node nodeAttr = attrs.getNamedItem("Name");
+            if( nodeAttr.getNodeValue().equals("name")){
+                node.setTextContent(userName);
+            }
+            if( nodeAttr.getNodeValue().equals("email")){
+                node.setTextContent(email);
+            }
+        }
+
     }
 
     private static void appendDataFromRequest(Document SAMLResponse, SAMLRequestData samlRequest) {
